@@ -92,34 +92,72 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
             int leftChild = getLeftChild(index);
             int rightChild = getRightChild(index);
 
-            ArrayList<Integer> leftTree = getTreeByRoot(leftChild, new ArrayList<Integer>());
-            ArrayList<Integer> rightTree = getTreeByRoot(rightChild, new ArrayList<Integer>());
+            ArrayList<Integer> leftTree = getTreeByRoot(leftChild, new ArrayList<>());
+            ArrayList<Integer> rightTree = getTreeByRoot(rightChild, new ArrayList<>());
 
             nodeList.set(index, null);
 
             if (nodeList.get(rightChild) != null && nodeList.get(leftChild) == null) {
 
-                moveUpwards(rightTree);
+                changeTop(rightTree, index);
 
             } else if (nodeList.get(rightChild) == null && nodeList.get(leftChild) != null) {
 
-                moveUpwards(leftTree);
+                changeTop(leftTree, index);
 
             } else if (nodeList.get(rightChild) != null && nodeList.get(leftChild) != null) {
 
                 if (depthByList(leftTree) <= depthByList(rightTree)) {
 
-                    moveUpwards(rightTree);
+                    E min = Collections.min(subtreeValues(rightTree));
+                    int minIndex = nodeList.indexOf(min);
+                    nodeList.set(index, min);
+                    nodeList.set(minIndex, null);
+
+                    ArrayList<Integer> indices = getTreeByRoot(minIndex, new ArrayList<>());
+                    moveUpwards(indices);
 
                 } else {
 
-                    moveUpwards(leftTree);
+                    E max = Collections.max(subtreeValues(leftTree));
+                    int maxIndex = nodeList.indexOf(max);
+                    nodeList.set(index, max);
+                    nodeList.set(maxIndex, null);
+
+
+                    ArrayList<Integer> indices = getTreeByRoot(maxIndex, new ArrayList<>());
+                    /*indices.add(index);
+                    Collections.sort(indices);*/
+                    moveUpwards(indices);
 
                 }
 
             }
         }
         return true;
+    }
+
+
+
+    public ArrayList<E> subtreeValues(ArrayList<Integer> indices) {
+        ArrayList<E> result = new ArrayList<>();
+
+        for (Integer i: indices) {
+            if (nodeList.get(i) != null) {
+                result.add(nodeList.get(i));
+            }
+        }
+
+        return result;
+    }
+
+    public void changeTop(ArrayList<Integer> tree, int root) {
+
+        int secondRoot = tree.get(0);
+        nodeList.set(root, nodeList.get(secondRoot));
+        nodeList.set(secondRoot, null);
+        moveUpwards(getTreeByRoot(secondRoot, new ArrayList<>()));
+
     }
 
     public void moveUpwards(ArrayList<Integer> indices) {
@@ -133,7 +171,9 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
         int leftDepth = depthByList(leftTree);
         int rightDepth = depthByList(rightTree);
 
-        nodeList.set(getParent(indices.get(0)), nodeList.get(root));
+        if (root != 0) {
+            nodeList.set(getParent(root), nodeList.get(root));
+        }
         nodeList.set(root, null);
 
         if (nodeList.size() > left) {
@@ -142,21 +182,21 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
 
                 if (nodeList.get(left) == null && nodeList.get(right) != null) {
 
-                    moveUpwards(rightTree);
+                    changeTop(rightTree, root);
 
                 } else if (nodeList.get(left) != null && nodeList.get(right) == null) {
 
-                    moveUpwards(leftTree);
+                    changeTop(leftTree, root);
 
                 } else if (nodeList.get(left) != null && nodeList.get(right) != null) {
 
                     if (rightDepth <= leftDepth) {
 
-                        moveUpwards(leftTree);
+                        changeTop(leftTree, root);
 
                     } else {
 
-                        moveUpwards(rightTree);
+                        changeTop(rightTree, root);
 
                     }
 
@@ -166,7 +206,7 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
 
                 if (nodeList.get(left) != null) {
 
-                    moveUpwards(leftTree);
+                    changeTop(leftTree, root);
 
                 }
 
@@ -281,8 +321,11 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
         test.add(8);
         System.out.println(test.nodeList);
         System.out.println(test.depth());
+        test.add(3);
+        System.out.println(test.nodeList);
+        System.out.println(test.depth());
 
-        test.remove(7);
+        test.remove(20);
         System.out.println(test.nodeList);
 
 
