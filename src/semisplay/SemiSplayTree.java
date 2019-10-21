@@ -61,20 +61,17 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
 
     }
 
-    public int lastNotNullIndex() {
-        int result = 0;
-        for (int i = 0; i < nodeList.size(); i++) {
-            if (nodeList.get(i) != null) {
-                result = i;
-            }
-        }
-        return result;
-    }
-
-
+    //Zorgt ervoor dat de lijst extra nullpointers bevat voor de toppen die geen 2 kinderen hebbben
     public void extend(ArrayList<E> list, int size) {
         while (list.size() < size) {
             list.add(null);
+        }
+    }
+
+    //Verwijdert overbodige nullpointers aan het einde van de lijst
+    public void decreaseLength() {
+        while (nodeList.size() > biggestNodeIndex()*2 + 3) {
+            nodeList.remove(nodeList.size() - 1);
         }
     }
 
@@ -124,21 +121,20 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
                     nodeList.set(index, max);
                     nodeList.set(maxIndex, null);
 
-
                     ArrayList<Integer> indices = getTreeByRoot(maxIndex, new ArrayList<>());
-                    /*indices.add(index);
-                    Collections.sort(indices);*/
                     moveUpwards(indices);
 
                 }
 
             }
         }
+
+        decreaseLength();
         return true;
     }
 
 
-
+    //Zet een lijst van inices om naar een lijst van hun corresponderende waarden
     public ArrayList<E> subtreeValues(ArrayList<Integer> indices) {
         ArrayList<E> result = new ArrayList<>();
 
@@ -171,9 +167,6 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
         int leftDepth = depthByList(leftTree);
         int rightDepth = depthByList(rightTree);
 
-        if (root != 0) {
-            nodeList.set(getParent(root), nodeList.get(root));
-        }
         nodeList.set(root, null);
 
         if (nodeList.size() > left) {
@@ -219,6 +212,7 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
         //TODO: splay implementeren
     }
 
+    //Geeft een deelboom weer adhv de wortel van deze deelboom
     public ArrayList<Integer> getTreeByRoot(int index, ArrayList<Integer> result) {
         result.add(index);
         if (nodeList.size() > 2*index + 1) {
@@ -278,6 +272,18 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
 
     }
 
+    public int biggestNodeIndex() {
+        int result = 0;
+
+        for (int i = 0; i < nodeList.size(); i++) {
+            if (nodeList.get(i) != null) {
+                result = i;
+            }
+        }
+
+        return result;
+    }
+
     public int depthByList(ArrayList<Integer> list) {
         if (list.size() == 0) {
             return 0;
@@ -326,6 +332,10 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
         System.out.println(test.depth());
 
         test.remove(20);
+        System.out.println(test.nodeList);
+        test.remove(5);
+        System.out.println(test.nodeList);
+        test.remove(7);
         System.out.println(test.nodeList);
 
 
