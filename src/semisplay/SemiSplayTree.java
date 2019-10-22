@@ -18,8 +18,8 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
 
     }
 
-    public Iterator<E> iterator() {
-        return new ArrayList<E>().iterator();
+    public SemiSplayTreeIterator<E> iterator() {
+        return new SemiSplayTreeIterator<E>(tree);
     }
 
     public boolean contains(E e) {
@@ -96,9 +96,14 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
         test.add(3);
         test.print();
         System.out.println(test.depth());
+        System.out.println(test.size());
 
-        test.remove(7);
+        test.remove(8);
+        System.out.println(test.size());
         test.print();
+
+        System.out.println("Iterator");
+        test.iterator().iterateOverAll();
 
 
 

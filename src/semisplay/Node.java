@@ -26,14 +26,14 @@ public class Node<E extends Comparable<E>> {
     }
 
     public int size() {
-        if (getRightTree() == null && getLeftTree() == null) {
+        if (rightTree == null && leftTree == null) {
             return 1;
-        } else if (getRightTree() == null && getLeftTree() != null) {
-            return getLeftTree().size();
-        } else if (getRightTree() != null && getLeftTree() == null) {
-            return getRightTree().size();
+        } else if (rightTree == null && leftTree != null) {
+            return 1 + leftTree.size();
+        } else if (rightTree != null && leftTree == null) {
+            return 1 + getRightTree().size();
         } else {
-            return getLeftTree().size() + getRightTree().size();
+            return 1 + leftTree.size() + rightTree.size();
         }
     }
 
@@ -41,14 +41,14 @@ public class Node<E extends Comparable<E>> {
         if (value == e) {
             return true;
         } else {
-            if (getRightTree() == null && getLeftTree() == null) {
+            if (rightTree == null && rightTree == null) {
                 return false;
-            } else if (getRightTree() == null && getLeftTree() != null) {
+            } else if (rightTree == null && leftTree != null) {
                 return getLeftTree().contains(e);
-            } else if (getRightTree() != null && getLeftTree() == null) {
-                return getRightTree().contains(e);
+            } else if (rightTree != null && leftTree == null) {
+                return rightTree.contains(e);
             } else {
-                return getLeftTree().contains(e) || getRightTree().contains(e);
+                return leftTree.contains(e) || rightTree.contains(e);
             }
         }
     }
@@ -57,7 +57,7 @@ public class Node<E extends Comparable<E>> {
         if (value == null) {
             value = e;
             return true;
-        } else if (e.compareTo(value) > 0) {
+        } else if (e.compareTo(value) < 0) {
             if (leftTree == null) {
                 leftTree = new Node(e, this);
                 return true;
@@ -94,63 +94,110 @@ public class Node<E extends Comparable<E>> {
         this.value = value;
     }
 
-    public void moveUowards() {
-        getParent().setValue(value);
-        value = null;
+
+
+    public boolean remove(E e) {
+        if (value != e) {
+            if (e.compareTo(value) < 0) {
+                if (leftTree != null) {
+                    leftTree.remove(e);
+                } else if (rightTree != null) {
+                    rightTree.remove(e);
+                }
+            } else {
+
+                if (rightTree != null) {
+                    rightTree.remove(e);
+                } else if (leftTree != null) {
+                    leftTree.remove(e);
+                }
+            }
+        } else {
+
+            if (leftTree == null && rightTree != null) {
+                reconnectParent(rightTree);
+
+            } else if (leftTree != null && rightTree == null) {
+                reconnectParent(leftTree);
+            } else if (leftTree == null && rightTree == null) {
+                if (parent != null) {
+                    reconnectParent(null);
+                }
+            } else {
+
+                if (leftTree.depth() >= rightTree.depth()) {
+
+                    replaceDeleted(leftTree.max());
+
+                } else {
+                    replaceDeleted(rightTree.min());
+                }
+            }
+        }
+        return true;
+    }
+
+    public void reconnectParent(Node<E> newChild) {
+        if (value.compareTo(parent.getValue()) > 0) {
+            parent.setRightTree(newChild);
+        } else {
+            parent.setLeftTree(newChild);
+        }
+    }
+
+    public void replaceDeleted(Node<E> node) {
+        value = node.getValue();
+
+        if (node.getRightTree() != null) {
+            node.getRightTree().moveUpwards();
+        } else if (node.getLeftTree() != null){
+            node.getLeftTree().moveUpwards();
+        } else {
+            if (node.getValue().compareTo((E) node.getParent().getValue()) > 0) {
+                node.getParent().setRightTree(null);
+            } else {
+                node.getParent().setLeftTree(null);
+            }
+        }
+    }
+
+
+    public void moveUpwards() {
+
+
 
         if (leftTree == null && rightTree != null) {
-            rightTree.moveUowards();
+            getParent().setValue(value);
+            value = null;
+            rightTree.moveUpwards();
         } else if (leftTree != null && rightTree == null) {
-            leftTree.moveUowards();
+            getParent().setValue(value);
+            value = null;
+            leftTree.moveUpwards();
         } else if (leftTree == null && rightTree == null) {
             if (parent != null) {
+                getParent().setValue(value);
                 if (value.compareTo(parent.getValue()) > 0) {
                     parent.setRightTree(null);
                 } else {
                     parent.setLeftTree(null);
                 }
+
             }
         } else {
 
             if (leftTree.depth() >= rightTree.depth()) {
-                leftTree.moveUowards();
-            } else {
-                rightTree.moveUowards();
-            }
-        }
-    }
+                getParent().setValue(value);
+                value = null;
+                leftTree.moveUpwards();
 
-    public boolean remove(E e) {
-        if (value != e) {
-            if (e.compareTo(value) < 0) {
-                leftTree.remove(e);
             } else {
-                rightTree.remove(e);
+                getParent().setValue(value);
+                value = null;
+                rightTree.moveUpwards();
             }
-        } else {
-            value = null;
-            if (leftTree == null && rightTree != null) {
-                rightTree.moveUowards();
-            } else if (leftTree != null && rightTree == null) {
-                leftTree.moveUowards();
-            } else if (leftTree == null && rightTree == null) {
-                if (parent != null) {
-                    if (value.compareTo(parent.getValue()) > 0) {
-                        parent.setRightTree(null);
-                    } else {
-                        parent.setLeftTree(null);
-                    }
-                }
-            } else {
 
-                if (leftTree.depth() >= rightTree.depth()) {
-                    leftTree.moveUowards();
-                } else {
-                    rightTree.moveUowards();
-                }
-            }
         }
-        return true;
     }
 
     public int depth() {
@@ -165,13 +212,33 @@ public class Node<E extends Comparable<E>> {
         }
     }
 
+    public Node<E> min() {
+        if (leftTree == null) {
+            return this;
+        } else {
+            return leftTree.min();
+        }
+    }
+
+    public Node<E> max() {
+        if (rightTree == null) {
+            return this;
+        } else {
+            return rightTree.max();
+        }
+    }
+
     public void print() {
+        String left = "";
+        String right = "";
         System.out.println(value);
         if (leftTree != null) {
+            System.out.println("Linkerkind van " + value.toString() + " is " + leftTree.getValue().toString());
             leftTree.print();
         }
 
         if (rightTree != null) {
+            System.out.println("Rechterkind van " + value.toString() + " is " + rightTree.getValue().toString());
             rightTree.print();
         }
     }
