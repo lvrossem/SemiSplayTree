@@ -127,27 +127,27 @@ public class SemiSplayTreeCopy implements SearchTree<Integer> {
         SemiSplayTree test = new SemiSplayTree(1);
         test.add(20);
         System.out.println(test.depth());
-        System.out.println(test.nodeList);
+        test.print();
         test.add(30);
         System.out.println(test.depth());
-        System.out.println(test.nodeList);
+        test.print();
         test.add(10);
         System.out.println(test.depth());
-        System.out.println(test.nodeList);
+        test.print();
         test.add(25);
         System.out.println(test.depth());
-        System.out.println(test.nodeList);
+        test.print();
         test.add(15);
         System.out.println(test.depth());
-        System.out.println(test.nodeList);
+        test.print();
         test.add(5);
         System.out.println(test.depth());
-        System.out.println(test.nodeList);
+        test.print();
         test.add(7);
         System.out.println(test.depth());
-        System.out.println(test.nodeList);
+        test.print();
         test.add(8);
-        System.out.println(test.nodeList);
+        test.print();
         System.out.println(test.depth());
 
     }
