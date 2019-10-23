@@ -9,7 +9,7 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
 
 
     private int splaySize;
-    private Node<E> tree;
+    public Node<E> tree;
 
 
     public SemiSplayTree(int splaySize) {
@@ -66,18 +66,41 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
 
     public static void main(String[] args) {
         SemiSplayTree<Integer> test = new SemiSplayTree(1);
-        Random RG = new Random();
-        for (int i = 0; i < 5000; i++) {
-            int j = RG.nextInt(10000);
-            test.add(j);
+        Random RG = new Random(11);
+        for (int i = 0; i<11; i++) {
+            test.add(RG.nextInt(100));
         }
+
+
         test.print();
+
+        test.remove(93);
+        test.print();
+        /*
+        for (int i = 0; i<1000; i++) {
+            int d = RG.nextInt(1000);
+            System.out.println("Deleted: " + d);
+            test.remove(d);
+
+        }
+
+         */
+
+
+
+
+
+
+
+
+
 
 
         System.out.println("Iterator");
         for (Integer i: test) {
             System.out.println(i);
         }
+
 
 
 

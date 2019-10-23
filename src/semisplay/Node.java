@@ -42,7 +42,7 @@ public class Node<E extends Comparable<E>> {
     public boolean contains(E e) {
         if (value == null) {
             return false;
-        } else if (value.compareTo(e) == 0) {
+        } else if (value.equals(e)) {
             return true;
         } else if (value.compareTo(e) > 0 && leftTree != null) {
             return leftTree.contains(e);
@@ -93,39 +93,38 @@ public class Node<E extends Comparable<E>> {
 
 
     public boolean remove(E e) {
-        if (value != e) {
+        if (!value.equals(e)) {
             if (e.compareTo(value) < 0) {
-                if (leftTree != null) {
-                    leftTree.remove(e);
-                } else if (rightTree != null) {
-                    rightTree.remove(e);
-                }
+                System.out.println(value);
+                leftTree.remove(e);
             } else {
-
-                if (rightTree != null) {
-                    rightTree.remove(e);
-                } else if (leftTree != null) {
-                    leftTree.remove(e);
-                }
+                System.out.println(value);
+                rightTree.remove(e);
             }
         } else {
 
             if (leftTree == null && rightTree != null) {
-                reconnectParent(rightTree);
+                if (parent != null) {
+                    reconnectParent(rightTree,this, parent);
+                }
 
             } else if (leftTree != null && rightTree == null) {
-                reconnectParent(leftTree);
+                if (parent != null) {
+                    reconnectParent(leftTree, this, parent);
+                }
             } else if (leftTree == null && rightTree == null) {
                 if (parent != null) {
-                    reconnectParent(null);
+                    reconnectParent(null, this, parent);
                 }
             } else {
 
                 if (leftTree.depth() >= rightTree.depth()) {
 
+                    value = leftTree.max().getValue();
                     replaceDeleted(leftTree.max());
 
                 } else {
+                    value = rightTree.min().getValue();
                     replaceDeleted(rightTree.min());
                 }
             }
@@ -133,13 +132,22 @@ public class Node<E extends Comparable<E>> {
         return true;
     }
 
-    public void reconnectParent(Node<E> newChild) {
-        if (value.compareTo(parent.getValue()) > 0) {
-            parent.setRightTree(newChild);
+    public void reconnectParent(Node<E> newChild, Node<E> currentParent, Node<E> newParent) {
+        if (newChild != null) {
+            if (newChild.getValue().compareTo(newParent.getValue()) > 0) {
+                newParent.setRightTree(newChild);
+            } else {
+                newParent.setLeftTree(newChild);
+            }
         } else {
-            parent.setLeftTree(newChild);
+            if (currentParent.getValue().compareTo(newParent.getValue()) > 0) {
+                newParent.setRightTree(newChild);
+            } else {
+                newParent.setLeftTree(newChild);
+            }
         }
     }
+
 
     public void replaceDeleted(Node<E> node) {
         value = node.getValue();
@@ -149,48 +157,52 @@ public class Node<E extends Comparable<E>> {
         } else if (node.getLeftTree() != null){
             node.getLeftTree().moveUpwards();
         } else {
-            if (node.getValue().compareTo((E) node.getParent().getValue()) > 0) {
-                node.getParent().setRightTree(null);
-            } else {
-                node.getParent().setLeftTree(null);
-            }
+            reconnectParent(null, node, node.getParent());
+        }
+    }
+
+    //Kijkt na of een node dezelfde waarde heeft als zijn parent, anders treden er duplicates op
+    public void checkDuplicate(Node<E> child, Node<E> par) {
+        if (child.getValue().equals(par.getRightTree().getValue())) {
+            par.setRightTree(null);
+        } else if (child.getValue().equals(par.getLeftTree().getValue())) {
+            par.setLeftTree(null);
         }
     }
 
 
     public void moveUpwards() {
 
-
-
         if (leftTree == null && rightTree != null) {
-            getParent().setValue(value);
-            value = null;
-            rightTree.moveUpwards();
+            parent.setValue(value);
+            reconnectParent(rightTree, this, parent);
+            checkDuplicate(this, parent);
+
         } else if (leftTree != null && rightTree == null) {
-            getParent().setValue(value);
-            value = null;
-            leftTree.moveUpwards();
+            parent.setValue(value);
+            reconnectParent(leftTree, this, parent);
+            checkDuplicate(this, parent);
+
         } else if (leftTree == null && rightTree == null) {
             if (parent != null) {
-                getParent().setValue(value);
-                if (value.compareTo(parent.getValue()) > 0) {
-                    parent.setRightTree(null);
+
+                if (parent.getParent().getValue().compareTo(parent.getValue()) > 0) {
+                    parent.getParent().setLeftTree(this);
                 } else {
-                    parent.setLeftTree(null);
+                    parent.getParent().setRightTree(this);
                 }
 
             }
         } else {
 
             if (leftTree.depth() >= rightTree.depth()) {
-                getParent().setValue(value);
-                value = null;
-                leftTree.moveUpwards();
+                parent.setValue(value);
+                reconnectParent(leftTree, this, parent);
 
             } else {
-                getParent().setValue(value);
-                value = null;
-                rightTree.moveUpwards();
+                parent.setValue(value);
+                reconnectParent(rightTree, this, parent);
+
             }
 
         }
