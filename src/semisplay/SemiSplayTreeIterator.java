@@ -21,6 +21,7 @@ public class SemiSplayTreeIterator<E extends Comparable<E>> implements Iterator<
 
     public E next() {
         E result = null;
+
         if (current.getLeftTree() != null) {
             visited.add(current);
             current = current.getLeftTree();
@@ -31,6 +32,11 @@ public class SemiSplayTreeIterator<E extends Comparable<E>> implements Iterator<
             result = current.getValue();
         } else {
 
+            if (current.getParent().getRightTree() != null) {
+                if (current.getParent().getRightTree().equals(current)) {
+                    visited.add(current);
+                }
+            }
             while (current.getParent() != null && (visited.contains(current.getRightTree()) || current.getRightTree() == null)) {
                 current = current.getParent();
             }

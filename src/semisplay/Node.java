@@ -38,18 +38,16 @@ public class Node<E extends Comparable<E>> {
     }
 
     public boolean contains(E e) {
-        if (value == e) {
+        if (value == null) {
+            return false;
+        } else if (value.compareTo(e) == 0) {
             return true;
+        } else if (value.compareTo(e) > 0 && leftTree != null) {
+            return leftTree.contains(e);
+        } else if (value.compareTo(e) < 0 && rightTree != null) {
+            return rightTree.contains(e);
         } else {
-            if (rightTree == null && rightTree == null) {
-                return false;
-            } else if (rightTree == null && leftTree != null) {
-                return getLeftTree().contains(e);
-            } else if (rightTree != null && leftTree == null) {
-                return rightTree.contains(e);
-            } else {
-                return leftTree.contains(e) || rightTree.contains(e);
-            }
+            return false;
         }
     }
 
@@ -204,9 +202,9 @@ public class Node<E extends Comparable<E>> {
         if (leftTree == null && rightTree == null) {
             return 0;
         } else if (leftTree != null && rightTree == null) {
-            return leftTree.depth();
+            return 1 + leftTree.depth();
         } else if (leftTree == null && rightTree != null) {
-            return rightTree.depth();
+            return 1 + rightTree.depth();
         } else {
             return Math.max(1 + leftTree.depth(), 1 + rightTree.depth());
         }
