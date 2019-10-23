@@ -163,10 +163,16 @@ public class Node<E extends Comparable<E>> {
 
     //Kijkt na of een node dezelfde waarde heeft als zijn parent, anders treden er duplicates op
     public void checkDuplicate(Node<E> child, Node<E> par) {
-        if (child.getValue().equals(par.getRightTree().getValue())) {
-            par.setRightTree(null);
-        } else if (child.getValue().equals(par.getLeftTree().getValue())) {
-            par.setLeftTree(null);
+        if (par != null) {
+            if (par.getRightTree() != null) {
+                if (child.getValue().equals(par.getRightTree().getValue())) {
+                    par.setRightTree(null);
+                }
+            } else if (par.getLeftTree() != null) {
+                if (child.getValue().equals(par.getLeftTree().getValue())) {
+                    par.setLeftTree(null);
+                }
+            }
         }
     }
 
@@ -184,24 +190,29 @@ public class Node<E extends Comparable<E>> {
             checkDuplicate(this, parent);
 
         } else if (leftTree == null && rightTree == null) {
-            if (parent != null) {
 
-                if (parent.getParent().getValue().compareTo(parent.getValue()) > 0) {
-                    parent.getParent().setLeftTree(this);
-                } else {
-                    parent.getParent().setRightTree(this);
-                }
 
+            if (parent.getValue().compareTo(value) > 0) {
+                parent.setLeftTree(null);
+            } else {
+                parent.setRightTree(null);
             }
+
+            parent.setValue(value);
+
+
+
         } else {
 
             if (leftTree.depth() >= rightTree.depth()) {
                 parent.setValue(value);
                 reconnectParent(leftTree, this, parent);
+                checkDuplicate(this, parent);
 
             } else {
                 parent.setValue(value);
                 reconnectParent(rightTree, this, parent);
+                checkDuplicate(this, parent);
 
             }
 
