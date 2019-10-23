@@ -1,5 +1,7 @@
 package semisplay;
 
+import java.util.ArrayList;
+
 public class Node<E extends Comparable<E>> {
 
     private Node<E> parent;
@@ -74,10 +76,6 @@ public class Node<E extends Comparable<E>> {
 
     public Node getParent() {
         return parent;
-    }
-
-    public void setParent(Node parent) {
-        this.parent = parent;
     }
 
     public void setLeftTree(Node leftTree) {

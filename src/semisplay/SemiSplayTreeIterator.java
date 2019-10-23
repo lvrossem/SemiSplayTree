@@ -5,14 +5,18 @@ import java.util.Iterator;
 
 public class SemiSplayTreeIterator<E extends Comparable<E>> implements Iterator<E> {
 
-    private Node<E> current;
+
     private Node<E> root;
     private ArrayList<Node<E>> visited;
+    private Node<E> current;
 
     public SemiSplayTreeIterator(Node<E> root) {
         this.root = root;
-        current = root;
+        //goToMin(root);
+        goToMin(root);
+
         visited = new ArrayList<>();
+
     }
 
     public boolean hasNext() {
@@ -22,35 +26,38 @@ public class SemiSplayTreeIterator<E extends Comparable<E>> implements Iterator<
     public E next() {
         E result = null;
 
-        if (current.getLeftTree() != null) {
-            visited.add(current);
-            current = current.getLeftTree();
-            result = current.getValue();
-        } else if (current.getRightTree() != null) {
-            visited.add(current);
-            current = current.getRightTree();
-            result = current.getValue();
-        } else {
-
-            if (current.getParent().getRightTree() != null) {
-                if (current.getParent().getRightTree().equals(current)) {
-                    visited.add(current);
-                }
-            }
-            while (current.getParent() != null && (visited.contains(current.getRightTree()) || current.getRightTree() == null)) {
+        if (visited.contains(current)) {
+            if (current.getParent() != null) {
                 current = current.getParent();
-            }
-
-            if (!visited.contains(current.getRightTree())) {
-                current = current.getRightTree();
-                visited.add(current);
-                result = current.getValue();
-            } else if (current.getParent() == null) {
+                return next();
+            } else {
                 current = null;
             }
-
         }
+
+        else if (current.getRightTree() != null && !visited.contains(current.getRightTree())) {
+            result = current.getValue();
+            visited.add(current);
+            goToMin(current.getRightTree());
+
+        } else {
+            result = current.getValue();
+            if (current.getParent() != null) {
+                visited.add(current);
+                current = current.getParent();
+            } else {
+                current = null;
+            }
+        }
+
+
         return result;
+
+    }
+
+
+    public void goToMin(Node<E> n) {
+        current = n.min();
     }
 
 
@@ -64,5 +71,7 @@ public class SemiSplayTreeIterator<E extends Comparable<E>> implements Iterator<
         current = root;
         visited.clear();
     }
+
+
 
 }

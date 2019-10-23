@@ -66,12 +66,10 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
 
     public static void main(String[] args) {
         SemiSplayTree<Integer> test = new SemiSplayTree(1);
-        Random RG = new Random(34);
-        for (int i = 0; i < 50; i++) {
-            int j = RG.nextInt(10);
+        Random RG = new Random();
+        for (int i = 0; i < 5000; i++) {
+            int j = RG.nextInt(10000);
             test.add(j);
-            System.out.println();
-
         }
         test.print();
 
