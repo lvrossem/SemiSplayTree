@@ -67,24 +67,33 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
     public static void main(String[] args) {
         SemiSplayTree<Integer> test = new SemiSplayTree(1);
         Random RG = new Random(11);
-        for (int i = 0; i<100; i++) {
-            test.add(RG.nextInt(30));
+        for (int i = 0; i<200; i++) {
+            test.add(RG.nextInt(300));
         }
 
-
+        /*
         test.print();
+        test.remove(38);
+        test.remove(5);
+        test.remove(43);
+        test.print();
+        test.remove(28);
+        test.print();
+        */
 
-        for (int i = 0; i<10; i++) {
-            int d = RG.nextInt(30);
-            System.out.println("te verwijderen: " + d);
+        for (int i = 0; i<50; i++) {
+            int d = RG.nextInt(300);
+            //System.out.println("te verwijderen: " + d);
             test.remove(d);
-            test.print();
+
         }
 
 
 
 
-        test.print();
+
+
+
 
 
 

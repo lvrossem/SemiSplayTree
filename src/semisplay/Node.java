@@ -78,6 +78,10 @@ public class Node<E extends Comparable<E>> {
         return parent;
     }
 
+    public void setParent(Node<E> parent) {
+        this.parent = parent;
+    }
+
     public void setLeftTree(Node leftTree) {
         this.leftTree = leftTree;
     }
@@ -120,12 +124,17 @@ public class Node<E extends Comparable<E>> {
 
                 if (leftTree.depth() >= rightTree.depth()) {
 
+                    E temp = value;
                     value = leftTree.max().getValue();
-                    replaceDeleted(leftTree.max());
+                    leftTree.max().setValue(temp);
+                    leftTree.remove(temp);
 
                 } else {
+
+                    E temp = value;
                     value = rightTree.min().getValue();
-                    replaceDeleted(rightTree.min());
+                    rightTree.min().setValue(temp);
+                    rightTree.remove(temp);
                 }
             }
         }
@@ -139,6 +148,7 @@ public class Node<E extends Comparable<E>> {
             } else {
                 newParent.setLeftTree(newChild);
             }
+            newChild.setParent(newParent);
         } else {
             if (currentParent.getValue().compareTo(newParent.getValue()) > 0) {
                 newParent.setRightTree(newChild);
