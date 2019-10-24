@@ -99,10 +99,8 @@ public class Node<E extends Comparable<E>> {
     public boolean remove(E e) {
         if (!value.equals(e)) {
             if (e.compareTo(value) < 0) {
-                System.out.println(value);
                 leftTree.remove(e);
             } else {
-                System.out.println(value);
                 rightTree.remove(e);
             }
         } else {

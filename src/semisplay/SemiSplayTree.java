@@ -9,7 +9,8 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
 
 
     private int splaySize;
-    public Node<E> tree;
+
+    private Node<E> tree;
 
 
     public SemiSplayTree(int splaySize) {
@@ -17,6 +18,11 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
         this.splaySize = splaySize;
         tree = new Node<>(null, null);
 
+    }
+
+    //TODO verwijderen
+    public Node<E> getTree() {
+        return tree;
     }
 
     public SemiSplayTreeIterator<E> iterator() {
