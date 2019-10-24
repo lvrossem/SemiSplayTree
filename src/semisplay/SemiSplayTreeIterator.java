@@ -12,7 +12,7 @@ public class SemiSplayTreeIterator<E extends Comparable<E>> implements Iterator<
 
     public SemiSplayTreeIterator(Node<E> root) {
         this.root = root;
-        //goToMin(root);
+
         goToMin(root);
 
         visited = new ArrayList<>();
@@ -21,7 +21,7 @@ public class SemiSplayTreeIterator<E extends Comparable<E>> implements Iterator<
 
     public boolean hasNext() {
         Node<E> right = rightMost();
-        return !visited.contains(right);
+        return !(root.getValue() == null || visited.contains(right));
     }
 
     public E next() {
@@ -44,6 +44,9 @@ public class SemiSplayTreeIterator<E extends Comparable<E>> implements Iterator<
             if (current.getParent() != null) {
                 visited.add(current);
                 current = current.getParent();
+            } else {
+                visited.add(current);
+
             }
         }
 

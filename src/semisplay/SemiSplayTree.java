@@ -27,6 +27,7 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
         return tree.contains(e);
     }
 
+
     public int size() {
         return tree.size();
     }
@@ -34,9 +35,14 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
     public boolean add(E e) {
         if (tree.contains(e)) {
             return false;
+        } else if (tree.getValue() == null) {
+
+            tree.setValue(e);
+            return true;
         } else {
-            return tree.add(e);
+            tree.add(e);
         }
+        return true;
     }
 
     public boolean remove(E e) {
@@ -48,7 +54,9 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
     }
 
     public int depth() {
-        if (tree.getLeftTree() == null && tree.getRightTree() == null) {
+        if (tree == null) {
+            return 0;
+        } else if (tree.getLeftTree() == null && tree.getRightTree() == null) {
             return 0;
         } else if (tree.getLeftTree() != null && tree.getRightTree() == null) {
             return 1 + tree.getLeftTree().depth();
@@ -66,12 +74,16 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
 
     public static void main(String[] args) {
         SemiSplayTree<Integer> test = new SemiSplayTree(1);
+
+
+
+
         Random RG = new Random(11);
         for (int i = 0; i<200; i++) {
             test.add(RG.nextInt(300));
         }
 
-        /*
+
         test.print();
         test.remove(38);
         test.remove(5);
@@ -79,7 +91,7 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
         test.print();
         test.remove(28);
         test.print();
-        */
+
 
         for (int i = 0; i<50; i++) {
             int d = RG.nextInt(300);
@@ -99,7 +111,7 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
 
 
 
-        System.out.println("Iterator");
+
         for (Integer i: test) {
             System.out.println(i);
         }
