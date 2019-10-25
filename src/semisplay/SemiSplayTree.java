@@ -20,24 +20,44 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
 
     }
 
-    //TODO verwijderen
+    /**
+     *
+     * @return de wortel van de boom om testen te kunnen uitvoeren
+     */
     public Node<E> getTree() {
         return tree;
     }
 
+    /**
+     *
+     * @return een iterator die alle toppen van klein naar groot overloopt
+     */
     public SemiSplayTreeIterator<E> iterator() {
         return new SemiSplayTreeIterator<E>(tree);
     }
 
+    /**
+     *
+     * kijkt na of de boom een zekere waarde bevat
+     * @return true als het erin zit, anders false
+     */
     public boolean contains(E e) {
         return tree.contains(e);
     }
 
-
+    /**
+     *
+     * @return aantal toppen in de boom
+     */
     public int size() {
         return tree.size();
     }
 
+    /**
+     *
+     * voegt de opgegeven waarde toe aan de boom als deze er niet in zit
+     * @return true als de waarde is toegevoeg, anders false
+     */
     public boolean add(E e) {
         if (tree.contains(e)) {
             return false;
@@ -51,6 +71,11 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
         return true;
     }
 
+    /**
+     *
+     * verwijdert de waarde die is meegegeven als deze in de boom zit
+     * @return true als de waarde verwijderd is, anders false
+     */
     public boolean remove(E e) {
         if (!tree.contains(e)) {
             return false;
@@ -59,6 +84,10 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
         }
     }
 
+    /**
+     * Berekent de diepte van de boom
+     * @return diepte van de boom
+     */
     public int depth() {
         if (tree == null) {
             return 0;
@@ -72,76 +101,5 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
             return Math.max(1 + tree.getLeftTree().depth(), 1 + tree.getRightTree().depth());
         }
     }
-
-    public void print() {
-        tree.print();
-    }
-
-
-    public static void main(String[] args) {
-        SemiSplayTree<Integer> tree = new SemiSplayTree<>(3);
-        Random RG = new Random(50);
-        ArrayList<Integer> list = new ArrayList<>();
-        for (int i = 0; i < 10000; i++) {
-            tree.add(RG.nextInt(10000));
-        }
-
-        for (Integer i: tree) {
-            list.add(i);
-        }
-
-        int result = 0;
-        if (isSorted(list) && list.size() > 1 && !containsDuplicates(list)) {
-            result = 1;
-        }
-
-
-        for (int i = 0; i < 44; i++) {
-
-            tree.remove(RG.nextInt(10000));
-
-        }
-
-        tree.print();
-        int n = RG.nextInt(10000);
-        System.out.println("Gaat kapot bij:" + n);
-        tree.remove(n);
-        tree.print();
-
-
-
-        for (Integer i: tree) {
-            System.out.println(i);
-        }
-
-
-
-
-
-    }
-
-    public static boolean isSorted(ArrayList<Integer> list)
-    {
-        boolean sorted = true;
-        for (int i = 1; i < list.size(); i++) {
-            if (list.get(i-1).compareTo(list.get(i)) > 0) {
-                sorted = false;
-                System.out.println(list.get(i-1) + " en " + list.get(i));
-            }
-        }
-
-        return sorted;
-    }
-
-    public static boolean containsDuplicates(ArrayList<Integer> list) {
-        boolean duplicates = false;
-        for (int i = 0; i < list.size() - 1; i++) {
-            if (list.get(i).equals(list.get(i+1))) {
-                duplicates = true;
-            }
-        }
-        return duplicates;
-    }
-
 
 }

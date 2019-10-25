@@ -41,7 +41,7 @@ public class Node<E extends Comparable<E>> {
 
     public boolean contains(E e) {
         if (value == null) {
-            return false;
+            return e == null;
         } else if (value.equals(e)) {
             return true;
         } else if (value.compareTo(e) > 0 && leftTree != null) {
@@ -109,6 +109,7 @@ public class Node<E extends Comparable<E>> {
                 if (parent != null) {
                     reconnectParent(rightTree,this, parent);
                 } else {
+                    rightTree.setParent(this);
                     rightTree.moveUpwards();
                 }
 
@@ -116,6 +117,7 @@ public class Node<E extends Comparable<E>> {
                 if (parent != null) {
                     reconnectParent(leftTree, this, parent);
                 } else {
+                    leftTree.setParent(this);
                     leftTree.moveUpwards();
                 }
             } else if (leftTree == null && rightTree == null) {
@@ -127,6 +129,7 @@ public class Node<E extends Comparable<E>> {
             } else {
 
                 if (leftTree.depth() >= rightTree.depth()) {
+
                     reconnectParent(leftTree, this, parent);
 
                 } else {
@@ -140,19 +143,26 @@ public class Node<E extends Comparable<E>> {
     }
 
     public void reconnectParent(Node<E> newChild, Node<E> currentParent, Node<E> newParent) {
-        if (newChild != null) {
+        if (newParent == null) {
+            newChild.setParent(null);
+        } else if (newChild != null) {
+
             if (newChild.getValue().compareTo(newParent.getValue()) > 0) {
                 newParent.setRightTree(newChild);
             } else {
                 newParent.setLeftTree(newChild);
             }
+
             newChild.setParent(newParent);
+
         } else {
+
             if (currentParent.getValue().compareTo(newParent.getValue()) > 0) {
                 newParent.setRightTree(null);
             } else {
                 newParent.setLeftTree(null);
             }
+
 
         }
     }

@@ -1,13 +1,12 @@
-package test;
+package semisplay;
 
 import org.junit.jupiter.api.Test;
-import semisplay.SemiSplayTree;
 
 import java.util.ArrayList;
 import java.util.Random;
 
 import static org.junit.Assert.*;
-
+//Testklasse om de functies van de semisplaytree te testen, tot nu toe werkt iedere test
 public class SemiSplayTreeTest {
 
     @Test
@@ -36,12 +35,14 @@ public class SemiSplayTreeTest {
     }
 
     @Test
-    public void treeMinMaxTest() {
+    public void treeMinMaxContainTest() {
         SemiSplayTree<String> tree = new SemiSplayTree<>(3);
+        assertTrue(!tree.contains("Mike"));
         assertEquals("Must be null",null, tree.getTree().max().getValue());
         assertEquals("Must be null",null, tree.getTree().min().getValue());
         tree.add("Mike");
         tree.add("Sierra");
+        assertTrue(tree.contains("Mike"));
         tree.add("Golf");
         assertEquals("Must be Sierra","Sierra", tree.getTree().max().getValue());
         assertEquals("Must be Golf","Golf", tree.getTree().min().getValue());
@@ -60,6 +61,7 @@ public class SemiSplayTreeTest {
         tree.add("Delta");
         tree.add("Echo");
         tree.add("Foxtrot");
+        assertTrue(tree.contains("Foxtrot"));
         tree.add("Hotel");
         tree.add("India");
         tree.add("Juliet");
@@ -68,7 +70,12 @@ public class SemiSplayTreeTest {
         tree.add("Romeo");
         tree.add("Tango");
         tree.add("Uniform");
+        assertTrue(tree.contains("Foxtrot"));
+        assertTrue(!tree.contains("Victor"));
         tree.add("Victor");
+        assertTrue(tree.contains("Foxtrot"));
+        tree.remove("Victor");
+        assertTrue(!tree.contains("Victor"));
         tree.add("Whiskey");
         tree.add("X-ray");
         tree.add("Yankee");
@@ -87,7 +94,7 @@ public class SemiSplayTreeTest {
         SemiSplayTree<Integer> tree = new SemiSplayTree<>(3);
         Random RG = new Random(50);
         ArrayList<Integer> list = new ArrayList<>();
-        for (int i = 0; i < 10000; i++) {
+        for (int i = 0; i < 100000; i++) {
             tree.add(RG.nextInt(10000));
         }
 
@@ -95,17 +102,20 @@ public class SemiSplayTreeTest {
             list.add(i);
         }
 
+
+        //KIjkt na of de boom nog steeds klopt
         int result = 0;
         if (isSorted(list) && list.size() > 1 && !containsDuplicates(list)) {
             result = 1;
         }
-        assertEquals("Must be 1", 1, result);
+        assertTrue(isSorted(list) && list.size() > 1 && !containsDuplicates(list));
 
-        for (int i = 0; i < 4000; i++) {
-            int n = RG.nextInt(10000);
-            tree.remove(n);
-            System.out.println(n);
+        //Haal alle elementen uit de boom om te testen of remove werkt
+        for (int i: tree) {
+            tree.remove(i);
         }
+
+
 
 
         list.clear();
@@ -119,7 +129,7 @@ public class SemiSplayTreeTest {
         }
 
 
-        assertEquals("Must be 1", 1, result);
+        assertTrue(isSorted(list) && !containsDuplicates(list));
 
 
 
