@@ -108,31 +108,31 @@ public class Node<E extends Comparable<E>> {
             if (leftTree == null && rightTree != null) {
                 if (parent != null) {
                     reconnectParent(rightTree,this, parent);
+                } else {
+                    rightTree.moveUpwards();
                 }
 
             } else if (leftTree != null && rightTree == null) {
                 if (parent != null) {
                     reconnectParent(leftTree, this, parent);
+                } else {
+                    leftTree.moveUpwards();
                 }
             } else if (leftTree == null && rightTree == null) {
                 if (parent != null) {
                     reconnectParent(null, this, parent);
+                } else {
+                    parent = null;
                 }
             } else {
 
                 if (leftTree.depth() >= rightTree.depth()) {
-
-                    E temp = value;
-                    value = leftTree.max().getValue();
-                    leftTree.max().setValue(temp);
-                    leftTree.remove(temp);
+                    reconnectParent(leftTree, this, parent);
 
                 } else {
 
-                    E temp = value;
-                    value = rightTree.min().getValue();
-                    rightTree.min().setValue(temp);
-                    rightTree.remove(temp);
+                    reconnectParent(rightTree, this, parent);
+
                 }
             }
         }
@@ -149,23 +149,11 @@ public class Node<E extends Comparable<E>> {
             newChild.setParent(newParent);
         } else {
             if (currentParent.getValue().compareTo(newParent.getValue()) > 0) {
-                newParent.setRightTree(newChild);
+                newParent.setRightTree(null);
             } else {
-                newParent.setLeftTree(newChild);
+                newParent.setLeftTree(null);
             }
-        }
-    }
 
-
-    public void replaceDeleted(Node<E> node) {
-        value = node.getValue();
-
-        if (node.getRightTree() != null) {
-            node.getRightTree().moveUpwards();
-        } else if (node.getLeftTree() != null){
-            node.getLeftTree().moveUpwards();
-        } else {
-            reconnectParent(null, node, node.getParent());
         }
     }
 

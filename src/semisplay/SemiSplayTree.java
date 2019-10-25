@@ -79,46 +79,38 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
 
 
     public static void main(String[] args) {
-        SemiSplayTree<Integer> test = new SemiSplayTree(1);
+        SemiSplayTree<Integer> tree = new SemiSplayTree<>(3);
+        Random RG = new Random(50);
+        ArrayList<Integer> list = new ArrayList<>();
+        for (int i = 0; i < 10000; i++) {
+            tree.add(RG.nextInt(10000));
+        }
 
+        for (Integer i: tree) {
+            list.add(i);
+        }
 
-
-
-        Random RG = new Random(11);
-        for (int i = 0; i<200; i++) {
-            test.add(RG.nextInt(300));
+        int result = 0;
+        if (isSorted(list) && list.size() > 1 && !containsDuplicates(list)) {
+            result = 1;
         }
 
 
-        test.print();
-        test.remove(38);
-        test.remove(5);
-        test.remove(43);
-        test.print();
-        test.remove(28);
-        test.print();
+        for (int i = 0; i < 44; i++) {
 
-
-        for (int i = 0; i<50; i++) {
-            int d = RG.nextInt(300);
-            //System.out.println("te verwijderen: " + d);
-            test.remove(d);
+            tree.remove(RG.nextInt(10000));
 
         }
 
+        tree.print();
+        int n = RG.nextInt(10000);
+        System.out.println("Gaat kapot bij:" + n);
+        tree.remove(n);
+        tree.print();
 
 
 
-
-
-
-
-
-
-
-
-
-        for (Integer i: test) {
+        for (Integer i: tree) {
             System.out.println(i);
         }
 
@@ -126,6 +118,29 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
 
 
 
+    }
+
+    public static boolean isSorted(ArrayList<Integer> list)
+    {
+        boolean sorted = true;
+        for (int i = 1; i < list.size(); i++) {
+            if (list.get(i-1).compareTo(list.get(i)) > 0) {
+                sorted = false;
+                System.out.println(list.get(i-1) + " en " + list.get(i));
+            }
+        }
+
+        return sorted;
+    }
+
+    public static boolean containsDuplicates(ArrayList<Integer> list) {
+        boolean duplicates = false;
+        for (int i = 0; i < list.size() - 1; i++) {
+            if (list.get(i).equals(list.get(i+1))) {
+                duplicates = true;
+            }
+        }
+        return duplicates;
     }
 
 

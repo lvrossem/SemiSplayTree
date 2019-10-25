@@ -101,6 +101,26 @@ public class SemiSplayTreeTest {
         }
         assertEquals("Must be 1", 1, result);
 
+        for (int i = 0; i < 4000; i++) {
+            int n = RG.nextInt(10000);
+            tree.remove(n);
+            System.out.println(n);
+        }
+
+
+        list.clear();
+        for (Integer i: tree) {
+            list.add(i);
+        }
+
+        result = 0;
+        if (isSorted(list) && !containsDuplicates(list)) {
+            result = 1;
+        }
+
+
+        assertEquals("Must be 1", 1, result);
+
 
 
 
@@ -110,7 +130,10 @@ public class SemiSplayTreeTest {
     {
         boolean sorted = true;
         for (int i = 1; i < list.size(); i++) {
-            if (list.get(i-1).compareTo(list.get(i)) > 0) sorted = false;
+            if (list.get(i-1).compareTo(list.get(i)) > 0) {
+                sorted = false;
+                System.out.println(list.get(i-1) + " en " + list.get(i));
+            }
         }
 
         return sorted;
