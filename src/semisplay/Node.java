@@ -1,6 +1,7 @@
 package semisplay;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Node<E extends Comparable<E>> {
 
@@ -8,22 +9,24 @@ public class Node<E extends Comparable<E>> {
     private Node<E> leftTree;
     private Node<E> rightTree;
 
+    private int splaySize;
     private E value;
 
-    public Node(E value, Node parent) {
+    public Node(E value, Node parent, int splaySize) {
         this.value = value;
         this.parent = parent;
+        this.splaySize = splaySize;
     }
 
     public E getValue() {
         return value;
     }
 
-    public Node getLeftTree() {
+    public Node<E> getLeftTree() {
         return leftTree;
     }
 
-    public Node getRightTree() {
+    public Node<E> getRightTree() {
         return rightTree;
     }
 
@@ -40,17 +43,31 @@ public class Node<E extends Comparable<E>> {
     }
 
     public boolean contains(E e) {
+        boolean result;
         if (value == null) {
-            return e == null;
+            result = e == null;
+            return result;
         } else if (value.equals(e)) {
             return true;
         } else if (value.compareTo(e) > 0 && leftTree != null) {
-            return leftTree.contains(e);
+            result = leftTree.contains(e);
+
+            return result;
         } else if (value.compareTo(e) < 0 && rightTree != null) {
-            return rightTree.contains(e);
+            result = rightTree.contains(e);
+
+            return result;
         } else {
+
             return false;
         }
+    }
+
+    public Node<E> getRoot() {
+        if (parent == null) {
+            return this;
+        }
+        return parent.getRoot();
     }
 
     public boolean add(E e) {
@@ -59,17 +76,45 @@ public class Node<E extends Comparable<E>> {
             return true;
         } else if (e.compareTo(value) < 0) {
             if (leftTree == null) {
-                leftTree = new Node(e, this);
+
+                leftTree = new Node(e, this, splaySize);
+                //leftTree.splay();
                 return true;
             } else {
                 return leftTree.add(e);
             }
         } else {
             if (rightTree == null) {
-                rightTree = new Node(e, this);
+
+                rightTree = new Node(e, this, splaySize);
+                //rightTree.splay();
                 return true;
             } else {
                 return rightTree.add(e);
+            }
+        }
+    }
+
+    public void addNode(Node<E> newNode) {
+
+        if (newNode != null) {
+            if (newNode.getValue().compareTo(value) > 0) {
+                if (rightTree == null) {
+                    rightTree = newNode;
+                    newNode.setParent(this);
+
+                } else {
+                    rightTree.addNode(newNode);
+                }
+            } else {
+                if (leftTree == null) {
+                    leftTree = newNode;
+                    newNode.setParent(this);
+
+                } else {
+                    leftTree.addNode(newNode);
+
+                }
             }
         }
     }
@@ -82,16 +127,26 @@ public class Node<E extends Comparable<E>> {
         this.parent = parent;
     }
 
-    public void setLeftTree(Node leftTree) {
+    public void setLeftTree(Node<E> leftTree) {
         this.leftTree = leftTree;
     }
 
-    public void setRightTree(Node rightTree) {
+    public void setRightTree(Node<E> rightTree) {
         this.rightTree = rightTree;
     }
 
     public void setValue(E value) {
         this.value = value;
+    }
+
+    public Node<E> search(E e) {
+        if (value.compareTo(e) == 0) {
+            return this;
+        } else if  (value.compareTo(e) > 0) {
+            return leftTree.search(e);
+        } else {
+            return rightTree.search(e);
+        }
     }
 
 
@@ -237,6 +292,14 @@ public class Node<E extends Comparable<E>> {
         }
     }
 
+    public int distanceToRoot() {
+        if (parent == null) {
+            return 0;
+        } else {
+            return 1 + parent.distanceToRoot();
+        }
+    }
+
     public Node<E> min() {
         if (leftTree == null) {
             return this;
@@ -253,10 +316,137 @@ public class Node<E extends Comparable<E>> {
         }
     }
 
+    public Node<E> splay(E e) {
+        Node<E> start = getRoot().search(e);
+        if (start.distanceToRoot() + 1 >= splaySize) {
+
+
+            Node<E> nextStart = start;
+            Node<E> oldRoot = start;
+            for (int i = 0; i < splaySize; i++) {
+                nextStart = nextStart.getParent();
+                if (i + 1 < splaySize) {
+                    oldRoot = oldRoot.getParent();
+                }
+            }
+
+
+            System.out.println("START VALUE IS " + Integer.toString((Integer)start.getValue()));
+            System.out.println("NEXTSTART VALUE IS " + nextStart != null);
+            System.out.println("OLROOT VALUE IS " + Integer.toString((Integer)oldRoot.getValue()));
+
+            ArrayList<Node<E>> subTrees = new ArrayList<>();
+            Node<E>[] splayPath = getSortedPath(oldRoot, start, subTrees);
+            System.out.println("SORTED PATH");
+            for (int i = 0; i< splaySize; i++) {
+                System.out.println(Integer.toString((Integer)splayPath[i].getValue()));
+            }
+            Node<E> newRoot = new Node<E>(splayPath[splaySize/2].getValue(), nextStart, splaySize);
+
+
+            if (nextStart != null) {
+                if (newRoot.getValue().compareTo(nextStart.getValue()) < 0) {
+                    nextStart.setLeftTree(newRoot);
+                } else {
+                    nextStart.setRightTree(newRoot);
+                }
+            }
+
+            addNodesRecursively(splayPath, 0, splaySize/2 - 1, newRoot);
+            addNodesRecursively(splayPath, splaySize/2 + 1, splaySize - 1, newRoot);
+            System.out.println("TREE AFTER ADDING NODES");
+            newRoot.print();
+
+
+            for (Node<E> node : subTrees) {
+                newRoot.addNode(node);
+            }
+
+            if (nextStart != null) {
+                if (nextStart.distanceToRoot() + 1 >= splaySize) {
+                    return nextStart.splay(nextStart.getValue());
+                }
+            }
+            return newRoot;
+
+        }
+        return getRoot();
+    }
+
+    public Node<E>[] getSortedPath(Node<E> root, Node<E> target, ArrayList<Node<E>> subTrees) {
+        Node[] result = new Node[splaySize];
+        Node<E> current = root;
+
+        while (current != null) {
+            //Huidige node staat rechts van de target-node
+            if (current.getValue().compareTo(target.getValue()) > 0) {
+                result[rightMostNull(result)] = current;
+                subTrees.add(current.getRightTree());
+                current = current.getLeftTree();
+
+            } else {
+                result[leftMostNull(result)] = current;
+                subTrees.add(current.getLeftTree());
+                current = current.getRightTree();
+            }
+        }
+        return result;
+    }
+
+    /**
+     *
+     * @param nodes
+     * @return index of leftmost null-element
+     */
+    public int leftMostNull(Node[] nodes) {
+        for (int i = 0; i < splaySize; i++) {
+            if (nodes[i] == null) {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
+    /**
+     *
+     * @param nodes
+     * @return index of rightmost null-element
+     */
+    public int rightMostNull(Node[] nodes) {
+        for (int i = splaySize - 1; i >= 0; i--) {
+            if (nodes[i] == null) {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
+    /**
+     *
+     * @param splayPath
+     * Adds nodes in a certain order so that the new binary tree will be as balanced as possible
+     */
+    public void addNodesRecursively(Node<E>[] splayPath, int start, int end, Node<E> currentTree) {
+        System.out.println("RECURSIVE CALL WITH START = " + Integer.toString(start) + " AND END = " + Integer.toString(end));
+        int len = end - start;
+
+        if (len == 0) {
+            currentTree.add(splayPath[start + (len / 2)].getValue());
+
+        } else if (len > 0) {
+            currentTree.add(splayPath[start + len / 2].getValue());
+            addNodesRecursively(splayPath, start, start + len / 2 - 1, currentTree);
+            addNodesRecursively(splayPath, start + len / 2 + 1, end, currentTree);
+        }
+
+    }
+
     public void print() {
         String left = "";
         String right = "";
-        System.out.println(value);
+
         if (leftTree != null) {
             System.out.println("Linkerkind van " + value.toString() + " is " + leftTree.getValue().toString());
             leftTree.print();

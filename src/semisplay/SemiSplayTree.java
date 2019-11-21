@@ -5,6 +5,10 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.Random;
 
+/**
+ * Language level staat ingesteld op Java 8 dus het zou moeten compileren
+ */
+
 public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
 
 
@@ -16,7 +20,7 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
     public SemiSplayTree(int splaySize) {
 
         this.splaySize = splaySize;
-        tree = new Node<>(null, null);
+        tree = new Node<E>(null, null, splaySize);
 
     }
 
@@ -42,7 +46,10 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
      * @return true als het erin zit, anders false
      */
     public boolean contains(E e) {
-        return tree.contains(e);
+        boolean result = tree.contains(e);
+        tree = tree.splay(e);
+        //tree = tree.getRoot();
+        return result;
     }
 
     /**
@@ -67,6 +74,12 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
             return true;
         } else {
             tree.add(e);
+            tree = tree.splay(e);
+            /*
+            tree = tree.getRoot();
+            System.out.println("CURREN TREE VALUE IS " + Integer.toString((Integer)tree.getValue()));
+            */
+
         }
         return true;
     }
@@ -80,7 +93,11 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
         if (!tree.contains(e)) {
             return false;
         } else {
-            return tree.remove(e);
+            boolean result = tree.remove(e);
+            tree = tree.splay(e);
+
+            //tree = tree.getRoot();
+            return result;
         }
     }
 
@@ -100,6 +117,25 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
         } else {
             return Math.max(1 + tree.getLeftTree().depth(), 1 + tree.getRightTree().depth());
         }
+    }
+
+    public static void main(String[] args) {
+        SemiSplayTree<Integer> tree = new SemiSplayTree<>(4);
+        tree.add(8);
+        tree.add(4);
+        tree.add(12);
+        tree.add(2);
+        System.out.println("FIRST PRINT");
+        tree.getTree().print();
+        System.out.println(tree.getTree().getParent() == null);
+        tree.add(6);
+        tree.add(10);
+        tree.add(14);
+        tree.add(11);
+
+        System.out.println("FINAL PRINT");
+        tree.getTree().print();
+
     }
 
 }
