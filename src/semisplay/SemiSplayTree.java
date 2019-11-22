@@ -46,10 +46,11 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
      * @return true als het erin zit, anders false
      */
     public boolean contains(E e) {
-        boolean result = tree.contains(e);
-        tree = tree.splay(e);
-        //tree = tree.getRoot();
-        return result;
+        if (tree.contains(e)){
+            tree = tree.splay(e);
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -90,14 +91,37 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
      * @return true als de waarde verwijderd is, anders false
      */
     public boolean remove(E e) {
+        boolean isLeft = true;
         if (!tree.contains(e)) {
             return false;
         } else {
-            boolean result = tree.remove(e);
-            tree = tree.splay(e);
+            Node<E> start = tree.search(e);
+            if (start.getRightTree() == null && start.getLeftTree() == null) {
+                start = start.getParent();
+                tree.remove(e);
+                tree = tree.splay(start.getValue());
+                return true;
+            } else {
+                if (start.getParent() != null) {
+                    if (start.getValue().compareTo(start.getParent().getValue()) > 0) {
+                        isLeft = false;
+                    }
+                    start = start.getParent();
+                    tree.remove(e);
+                    System.out.println("GONNA DELETE 16");
+                    tree.print();
+                    if (isLeft) {
+                        tree = tree.splay(start.getLeftTree().getValue());
+                    } else {
+                        tree = tree.splay(start.getRightTree().getValue());
+                    }
+                } else {
+                    tree.remove(e);
+                }
+            }
 
             //tree = tree.getRoot();
-            return result;
+            return true;
         }
     }
 
@@ -120,18 +144,17 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
     }
 
     public static void main(String[] args) {
-        SemiSplayTree<Integer> tree = new SemiSplayTree<>(4);
+        SemiSplayTree<Integer> tree = new SemiSplayTree<>(3);
         tree.add(8);
         tree.add(4);
         tree.add(12);
         tree.add(2);
-        System.out.println("FIRST PRINT");
-        tree.getTree().print();
-        System.out.println(tree.getTree().getParent() == null);
-        tree.add(6);
-        tree.add(10);
-        tree.add(14);
-        tree.add(11);
+        tree.add(16);
+        tree.add(20);
+        tree.add(1);
+
+        tree.remove(16);
+
 
         System.out.println("FINAL PRINT");
         tree.getTree().print();
