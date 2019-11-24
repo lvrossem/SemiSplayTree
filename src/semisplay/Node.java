@@ -387,6 +387,27 @@ public class Node<E extends Comparable<E>> {
     /**
      *
      * @param e
+     * @return de laatse top op het pad naar de locatie waar de top met waarde e zou moeten komen, nodig als we zoeken naar een top die nog niet bestaat
+     */
+    public Node<E> getDestination(E e) {
+        if (value.compareTo(e) > 0) {
+            if (leftTree == null) {
+                return this;
+            } else {
+                return leftTree.getDestination(e);
+            }
+        } else {
+            if (rightTree == null) {
+                return this;
+            } else {
+                return rightTree.getDestination(e);
+            }
+        }
+    }
+
+    /**
+     *
+     * @param e
      * @return Geeft de wortel van de nieuwe boom die gemaakt is in de splaystap
      */
     public Node<E> splay(E e) {

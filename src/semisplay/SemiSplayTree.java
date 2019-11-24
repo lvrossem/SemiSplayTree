@@ -46,11 +46,17 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
      * @return true als het erin zit, anders false
      */
     public boolean contains(E e) {
-        if (tree.contains(e)){
+        if (tree.contains(e)) {
             tree = tree.splay(e);
             return true;
+        } else {
+            if (tree.getValue() != null) {
+                tree = tree.splay(tree.getDestination(e).getValue());
+
+            }
+            return false;
         }
-        return false;
+
     }
 
     /**
@@ -79,8 +85,11 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
              } else {
                  return tree;
              }
+         } else {
+             tree = tree.splay(tree.getDestination(e).getValue());
+             return null;
          }
-         return null;
+
 
      }
 
@@ -91,6 +100,7 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
      */
     public boolean add(E e) {
         if (tree.contains(e)) {
+            tree = tree.splay(e);
             return false;
         } else if (tree.getValue() == null) {
 
@@ -112,6 +122,7 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
     public boolean remove(E e) {
         boolean isLeft = true;
         if (!tree.contains(e)) {
+            tree = tree.splay(tree.getDestination(e).getValue());
             return false;
         } else {
             Node<E> start = tree.getNodeByValue(e);
@@ -128,7 +139,7 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
                     start = start.getParent();
                     tree.remove(e);
 
-                    tree.print();
+
                     if (isLeft) {
                         tree = tree.splay(start.getLeftTree().getValue());
                     } else {

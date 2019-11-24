@@ -14,20 +14,20 @@ public class SemiSplayTreeTest {
         SemiSplayTree<Integer> tree = new SemiSplayTree<>(3);
         assertEquals("Must be 0",0, tree.depth());
         tree.add(20);
-        tree.getTree().print();
+
         assertEquals("Must be 0",0, tree.depth());
         tree.add(10);
         assertEquals("Must be 1",1, tree.depth());
         tree.add(30);
-        tree.getTree().print();
+
         assertEquals("Must be 1",1, tree.depth());
         tree.add(31);
         assertEquals("Must be 2",2, tree.depth());
         tree.add(32);
-        tree.getTree().print();
+
         assertEquals("Must be 3",3, tree.depth());
         tree.add(33);
-        tree.getTree().print();
+
         assertEquals("Must be 4",4, tree.depth());
         tree.add(34);
         assertEquals("Must be 5",5, tree.depth());
@@ -51,17 +51,14 @@ public class SemiSplayTreeTest {
         assertEquals("Must be 3",3, tree.depth());
         tree.add(2000);
         assertTrue(tree.getTree().getLeftTree().getLeftTree().getLeftTree().getLeftTree().getValue() == 2);
-        System.out.println("ADDED 2000");
-        tree.getTree().print();
+
         assertEquals("Must be 4",4, tree.depth());
         tree.getNodeByValue(2);
         assertEquals("Must be 4",4, tree.depth());
         assertTrue(tree.getTree().getLeftTree().getLeftTree().getValue() == 2);
-        System.out.println("SEARCHED 2");
-        tree.getTree().print();
+
         tree.remove(12);
-        System.out.println("REMOVED 12");
-        tree.getTree().print();
+
 
 
 
@@ -154,12 +151,19 @@ public class SemiSplayTreeTest {
         SemiSplayTree<Integer> tree = new SemiSplayTree<>(25);
         Random RG = new Random(50);
         ArrayList<Integer> list = new ArrayList<>();
+
+        Timer timer = new Timer();
+        timer.start();
         for (int i = 0; i < 100; i++) {
-            int added = RG.nextInt(1000);
+            int added = RG.nextInt(10000000);
             tree.add(added);
-            assertTrue(tree.contains(added));
+            //assertTrue(tree.contains(added));
 
         }
+        timer.end();
+        System.out.println("TIME TO ADD 100000 elements:");
+        System.out.println(timer.delta());
+
 
         for (Integer i: tree) {
             list.add(i);
@@ -184,14 +188,7 @@ public class SemiSplayTreeTest {
             list.add(i);
         }
 
-
-
-
         assertTrue(isSorted(list) && !containsDuplicates(list));
-
-
-
-
     }
 
     public boolean isSorted(ArrayList<Integer> list)
