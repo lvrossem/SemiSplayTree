@@ -61,6 +61,29 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
         return tree.size();
     }
 
+
+    /**
+     * Geeft de top met de opgegeven waarde terug en splayt vanaf deze top, dient als lookup-operatie van de splayboom
+     */
+     public Node<E> getNodeByValue(E e) {
+         if (tree.contains(e)) {
+             Node<E> result;
+             if (tree.getValue().compareTo(e) > 0) {
+                 result = tree.getLeftTree().getNodeByValue(e);
+                 tree = tree.splay(e);
+                 return result;
+             } else if (tree.getValue().compareTo(e) < 0) {
+                 result = tree.getRightTree().getNodeByValue(e);
+                 tree = tree.splay(e);
+                 return result;
+             } else {
+                 return tree;
+             }
+         }
+         return null;
+
+     }
+
     /**
      *
      * voegt de opgegeven waarde toe aan de boom als deze er niet in zit
@@ -76,10 +99,6 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
         } else {
             tree.add(e);
             tree = tree.splay(e);
-            /*
-            tree = tree.getRoot();
-            System.out.println("CURREN TREE VALUE IS " + Integer.toString((Integer)tree.getValue()));
-            */
 
         }
         return true;
@@ -95,7 +114,7 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
         if (!tree.contains(e)) {
             return false;
         } else {
-            Node<E> start = tree.search(e);
+            Node<E> start = tree.getNodeByValue(e);
             if (start.getRightTree() == null && start.getLeftTree() == null) {
                 start = start.getParent();
                 tree.remove(e);
@@ -108,7 +127,7 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
                     }
                     start = start.getParent();
                     tree.remove(e);
-                    System.out.println("GONNA DELETE 16");
+
                     tree.print();
                     if (isLeft) {
                         tree = tree.splay(start.getLeftTree().getValue());
@@ -143,12 +162,19 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
         }
     }
 
+    /*
     public static void main(String[] args) {
         SemiSplayTree<Integer> tree = new SemiSplayTree<>(3);
         tree.add(8);
         tree.add(4);
         tree.add(12);
         tree.add(2);
+        System.out.println("ADDED 2");
+        tree.getTree().print();
+        tree.getNodeByValue(12);
+        System.out.println("SEARCHED 12");
+        tree.getTree().print();
+        /*
         tree.add(16);
         tree.add(20);
         tree.add(1);
@@ -159,6 +185,9 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
         System.out.println("FINAL PRINT");
         tree.getTree().print();
 
+
+
     }
+    */
 
 }

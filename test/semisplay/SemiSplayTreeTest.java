@@ -34,6 +34,7 @@ public class SemiSplayTreeTest {
         tree.add(35);
         assertEquals("Must be 6",6, tree.depth());
 
+        //Is ook getest voor andere splaygroottes dan 3 en 4
         tree = new SemiSplayTree<>(4);
         tree.add(8);
         tree.add(4);
@@ -44,17 +45,23 @@ public class SemiSplayTreeTest {
         tree.add(10);
         tree.add(14);
         tree.add(1000);
-        /*
-        System.out.println("ADDED 1000");
-        tree.getTree().print();
-        */
-
         assertEquals("Must be 3",3, tree.depth());
         tree.add(500);
         tree.add(1500);
         assertEquals("Must be 3",3, tree.depth());
         tree.add(2000);
+        assertTrue(tree.getTree().getLeftTree().getLeftTree().getLeftTree().getLeftTree().getValue() == 2);
+        System.out.println("ADDED 2000");
+        tree.getTree().print();
         assertEquals("Must be 4",4, tree.depth());
+        tree.getNodeByValue(2);
+        assertEquals("Must be 4",4, tree.depth());
+        assertTrue(tree.getTree().getLeftTree().getLeftTree().getValue() == 2);
+        System.out.println("SEARCHED 2");
+        tree.getTree().print();
+        tree.remove(12);
+        System.out.println("REMOVED 12");
+        tree.getTree().print();
 
 
 
@@ -76,7 +83,6 @@ public class SemiSplayTreeTest {
 
         tree.add("Papa");
 
-
         tree.add("Mike");
         tree.add("Sierra");
 
@@ -87,12 +93,10 @@ public class SemiSplayTreeTest {
         assertEquals("Must be Sierra","Sierra", tree.getTree().max().getValue());
         assertEquals("Must be Golf","Golf", tree.getTree().min().getValue());
 
-
         tree.add("Kilo");
         tree.add("Lima");
 
         tree.add("Quebec");
-
 
         tree.add("Oscar");
         assertEquals("Must be Sierra","Sierra", tree.getTree().max().getValue());
@@ -119,25 +123,16 @@ public class SemiSplayTreeTest {
         tree.add("India");
 
         tree.add("Juliet");
-
         tree.add("November");
-
         tree.add("Papa");
-
-
         tree.add("Romeo");
-
         tree.add("Tango");
         tree.add("Uniform");
         assertTrue(tree.contains("Foxtrot"));
         assertTrue(!tree.contains("Victor"));
         tree.add("Victor");
-
-
         assertTrue(tree.contains("Foxtrot"));
-
         tree.remove("Victor");
-
         assertTrue(!tree.contains("Victor"));
         tree.add("Whiskey");
         tree.add("X-ray");

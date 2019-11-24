@@ -106,7 +106,7 @@ public class Node<E extends Comparable<E>> {
                 if (rightTree == null) {
                     rightTree = newNode;
                     newNode.setParent(this);
-                    System.out.println("CONNECTED PARENT " + newNode.getValue() + " TO CHILD " + newNode.getValue());
+
 
                 } else {
                     rightTree.addNode(newNode);
@@ -115,7 +115,7 @@ public class Node<E extends Comparable<E>> {
                 if (leftTree == null) {
                     leftTree = newNode;
                     newNode.setParent(this);
-                    System.out.println("CONNECTED PARENT " + newNode.getValue() + " TO CHILD " + newNode.getValue());
+
 
                 } else {
                     leftTree.addNode(newNode);
@@ -145,18 +145,45 @@ public class Node<E extends Comparable<E>> {
         this.value = value;
     }
 
-    public Node<E> search(E e) {
+    /**
+     * Zoekt een top aan de hand van een waarde zonder te splayen
+     * @param e
+     * @return Top met opgegeven waarde
+     */
+    public Node<E> getNodeByValue(E e) {
         if (value.equals(e)) {
             return this;
         } else if (value.compareTo(e) > 0) {
-            return leftTree.search(e);
+            return leftTree.getNodeByValue(e);
         } else {
             /*
             System.out.println(e);
             print();
             */
 
-            return rightTree.search(e);
+            return rightTree.getNodeByValue(e);
+
+        }
+    }
+
+    /**
+     * Geeft top met gegeven waarde en splayt vanaf die top
+     * @param e
+     * @return Top met gegeven waarde
+     */
+    public Node<E> search(E e) {
+        if (value.equals(e)) {
+            return this;
+
+        } else if (value.compareTo(e) > 0) {
+            return leftTree.getNodeByValue(e);
+        } else {
+            /*
+            System.out.println(e);
+            print();
+            */
+
+            return rightTree.getNodeByValue(e);
 
         }
     }
@@ -363,15 +390,7 @@ public class Node<E extends Comparable<E>> {
      * @return Geeft de wortel van de nieuwe boom die gemaakt is in de splaystap
      */
     public Node<E> splay(E e) {
-        Node<E> start = getRoot().search(e);
-        /*
-        System.out.println("DSITANCE TO ROOT IS: " + Integer.toString(start.distanceToRoot()));
-        System.out.println("STARTVALUE IS: " + start.getValue());
-        if (start.getParent() != null) {
-            System.out.println("START-PARENT IS: " + start.getParent().getValue());
-        }
-        */
-
+        Node<E> start = getRoot().getNodeByValue(e);
 
         if (start.distanceToRoot() + 1 >= splaySize) {
 
@@ -382,61 +401,19 @@ public class Node<E extends Comparable<E>> {
             }
 
             Node<E> oldRootParent = oldRoot.getParent();
-            /*
-            Node<E> nextStart = start;
-            Node<E> oldRoot = start;
-            for (int i = 0; i < splaySize; i++) {
-                nextStart = nextStart.getParent();
-                if (i + 1 < splaySize) {
-                    oldRoot = oldRoot.getParent();
-                }
-            }
-
-            */
-
-            /*
-            System.out.println("START VALUE IS " + Integer.toString((Integer)start.getValue()));
-            System.out.println("NEXTSTART VALUE IS " + nextStart != null);
-            System.out.println("OLROOT VALUE IS " + Integer.toString((Integer)oldRoot.getValue()));
-            */
-
 
             ArrayList<Node<E>> subTrees = new ArrayList<>();
             Node<E>[] splayPath = getSortedPath(oldRoot, start, subTrees);
-            System.out.println("SORTED PATH");
-
-            for (int i = 0; i< splaySize; i++) {
-                System.out.println(splayPath[i].getValue());
-            }
-
 
             Node<E> newRoot = new Node<E>(splayPath[splaySize/2].getValue(), null, splaySize);
-            //newRoot.setParent(null);
-
-            /*
-            if (nextStart != null) {
-                if (newRoot.getValue().compareTo(nextStart.getValue()) < 0) {
-                    nextStart.setLeftTree(newRoot);
-                } else {
-                    nextStart.setRightTree(newRoot);
-                }
-            }
-            */
-
 
             addNodesRecursively(splayPath, 0, splaySize/2 - 1, newRoot);
             addNodesRecursively(splayPath, splaySize/2 + 1, splaySize - 1, newRoot);
-
-            System.out.println("TREE AFTER ADDING NODES");
-            newRoot.print();
 
 
             for (Node<E> node : subTrees) {
                 newRoot.addNode(node);
             }
-
-            System.out.println("TREE AFTER ADDING SUBTREES");
-            newRoot.print();
 
             newRoot.setParent(oldRootParent);
             if (oldRootParent != null) {
@@ -448,20 +425,6 @@ public class Node<E extends Comparable<E>> {
             }
 
             return newRoot.splay(newRoot.getValue());
-
-            /*
-            if (nextStart != null) {
-
-
-                System.out.println(nextStart.getValue());
-                return nextStart.splay(nextStart.getValue());
-
-
-            } else {
-                return newRoot.getRoot();
-            }
-
-             */
 
         }
         return start.getRoot();
@@ -488,9 +451,7 @@ public class Node<E extends Comparable<E>> {
                     subTrees.add(current.getLeftTree());
                 } else {
                     subTrees.add(current.getRightTree());
-                    if (current.getRightTree() != null) {
-                        System.out.println("ADDED SUBTREE " + current.getRightTree().getValue());
-                    }
+
                 }
                 current = current.getLeftTree();
 
@@ -502,9 +463,7 @@ public class Node<E extends Comparable<E>> {
                     subTrees.add(current.getLeftTree());
                 } else {
                     subTrees.add(current.getLeftTree());
-                    if (current.getLeftTree() != null) {
-                        System.out.println("ADDED SUBTREE " + current.getLeftTree().getValue());
-                    }
+
                 }
                 current = current.getRightTree();
             }
@@ -551,7 +510,7 @@ public class Node<E extends Comparable<E>> {
      * Voegt alle toppen op het pad toe aan een nieuwe boom in een bepaalde volgorde zodat de nieuwe boom zo gebalanceerd mogelijk is
      */
     public void addNodesRecursively(Node<E>[] splayPath, int start, int end, Node<E> currentTree) {
-        System.out.println("RECURSIVE CALL WITH START = " + Integer.toString(start) + " AND END = " + Integer.toString(end));
+
         int len = end - start;
 
         if (len == 0) {
