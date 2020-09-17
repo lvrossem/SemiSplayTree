@@ -8,20 +8,14 @@ import java.util.Random;
 /**
  * Language level staat ingesteld op Java 8 dus het zou moeten compileren
  */
-
 public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
 
-
     private int splaySize;
-
     private Node<E> tree;
 
-
     public SemiSplayTree(int splaySize) {
-
         this.splaySize = splaySize;
         tree = new Node<E>(null, null, splaySize);
-
     }
 
     /**
@@ -33,7 +27,6 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
     }
 
     /**
-     *
      * @return een iterator die alle toppen van klein naar groot overloopt
      */
     public SemiSplayTreeIterator<E> iterator() {
@@ -41,7 +34,6 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
     }
 
     /**
-     *
      * kijkt na of de boom een zekere waarde bevat
      * @return true als het erin zit, anders false
      */
@@ -52,15 +44,12 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
         } else {
             if (tree.getValue() != null) {
                 tree = tree.splay(tree.getDestination(e).getValue());
-
             }
             return false;
         }
-
     }
 
     /**
-     *
      * @return aantal toppen in de boom
      */
     public int size() {
@@ -89,8 +78,6 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
              tree = tree.splay(tree.getDestination(e).getValue());
              return null;
          }
-
-
      }
 
     /**
@@ -109,7 +96,6 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
         } else {
             tree.add(e);
             tree = tree.splay(e);
-
         }
         return true;
     }
@@ -136,9 +122,9 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
                     if (start.getValue().compareTo(start.getParent().getValue()) > 0) {
                         isLeft = false;
                     }
+
                     start = start.getParent();
                     tree.remove(e);
-
 
                     if (isLeft) {
                         tree = tree.splay(start.getLeftTree().getValue());
@@ -149,7 +135,6 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
                     tree.remove(e);
                 }
             }
-
             //tree = tree.getRoot();
             return true;
         }
@@ -195,9 +180,6 @@ public class SemiSplayTree<E extends Comparable<E>> implements SearchTree<E> {
 
         System.out.println("FINAL PRINT");
         tree.getTree().print();
-
-
-
     }
     */
 

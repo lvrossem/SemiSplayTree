@@ -51,14 +51,11 @@ public class Node<E extends Comparable<E>> {
             return true;
         } else if (value.compareTo(e) > 0 && leftTree != null) {
             result = leftTree.contains(e);
-
             return result;
         } else if (value.compareTo(e) < 0 && rightTree != null) {
             result = rightTree.contains(e);
-
             return result;
         } else {
-
             return false;
         }
     }
@@ -76,7 +73,6 @@ public class Node<E extends Comparable<E>> {
             return true;
         } else if (e.compareTo(value) < 0) {
             if (leftTree == null) {
-
                 leftTree = new Node(e, this, splaySize);
                 //leftTree.splay();
                 return true;
@@ -85,7 +81,6 @@ public class Node<E extends Comparable<E>> {
             }
         } else {
             if (rightTree == null) {
-
                 rightTree = new Node(e, this, splaySize);
                 //rightTree.splay();
                 return true;
@@ -106,8 +101,6 @@ public class Node<E extends Comparable<E>> {
                 if (rightTree == null) {
                     rightTree = newNode;
                     newNode.setParent(this);
-
-
                 } else {
                     rightTree.addNode(newNode);
                 }
@@ -115,8 +108,6 @@ public class Node<E extends Comparable<E>> {
                 if (leftTree == null) {
                     leftTree = newNode;
                     newNode.setParent(this);
-
-
                 } else {
                     leftTree.addNode(newNode);
 
@@ -174,7 +165,6 @@ public class Node<E extends Comparable<E>> {
     public Node<E> search(E e) {
         if (value.equals(e)) {
             return this;
-
         } else if (value.compareTo(e) > 0) {
             return leftTree.getNodeByValue(e);
         } else {
@@ -182,9 +172,7 @@ public class Node<E extends Comparable<E>> {
             System.out.println(e);
             print();
             */
-
             return rightTree.getNodeByValue(e);
-
         }
     }
 
@@ -210,7 +198,6 @@ public class Node<E extends Comparable<E>> {
                     rightTree.setParent(this);
                     rightTree.moveUpwards();
                 }
-
             } else if (leftTree != null && rightTree == null) {
                 if (parent != null) {
                     reconnectParent(leftTree, this, parent);
@@ -225,14 +212,10 @@ public class Node<E extends Comparable<E>> {
                     parent = null;
                 }
             } else {
-
                 if (leftTree.depth() >= rightTree.depth()) {
-
                     reconnectParent(leftTree, this, parent);
                     leftTree.addNode(rightTree);
-
                 } else {
-
                     reconnectParent(rightTree, this, parent);
                     rightTree.addNode(leftTree);
                 }
@@ -251,24 +234,18 @@ public class Node<E extends Comparable<E>> {
         if (newParent == null) {
             newChild.setParent(null);
         } else if (newChild != null) {
-
             if (newChild.getValue().compareTo(newParent.getValue()) > 0) {
                 newParent.setRightTree(newChild);
             } else {
                 newParent.setLeftTree(newChild);
             }
-
             newChild.setParent(newParent);
-
         } else {
-
             if (currentParent.getValue().compareTo(newParent.getValue()) > 0) {
                 newParent.setRightTree(null);
             } else {
                 newParent.setLeftTree(null);
             }
-
-
         }
     }
 
@@ -303,32 +280,22 @@ public class Node<E extends Comparable<E>> {
             checkDuplicate(this, parent);
 
         } else if (leftTree == null && rightTree == null) {
-
-
             if (parent.getValue().compareTo(value) > 0) {
                 parent.setLeftTree(null);
             } else {
                 parent.setRightTree(null);
             }
-
             parent.setValue(value);
-
-
-
         } else {
-
             if (leftTree.depth() >= rightTree.depth()) {
                 parent.setValue(value);
                 reconnectParent(leftTree, this, parent);
                 checkDuplicate(this, parent);
-
             } else {
                 parent.setValue(value);
                 reconnectParent(rightTree, this, parent);
                 checkDuplicate(this, parent);
-
             }
-
         }
     }
 
@@ -431,7 +398,6 @@ public class Node<E extends Comparable<E>> {
             addNodesRecursively(splayPath, 0, splaySize/2 - 1, newRoot);
             addNodesRecursively(splayPath, splaySize/2 + 1, splaySize - 1, newRoot);
 
-
             for (Node<E> node : subTrees) {
                 newRoot.addNode(node);
             }
@@ -488,8 +454,6 @@ public class Node<E extends Comparable<E>> {
                 }
                 current = current.getRightTree();
             }
-
-
             steps++;
         }
         return result;
@@ -506,7 +470,6 @@ public class Node<E extends Comparable<E>> {
                 return i;
             }
         }
-
         return -1;
     }
 
@@ -521,7 +484,6 @@ public class Node<E extends Comparable<E>> {
                 return i;
             }
         }
-
         return -1;
     }
 
@@ -531,33 +493,26 @@ public class Node<E extends Comparable<E>> {
      * Voegt alle toppen op het pad toe aan een nieuwe boom in een bepaalde volgorde zodat de nieuwe boom zo gebalanceerd mogelijk is
      */
     public void addNodesRecursively(Node<E>[] splayPath, int start, int end, Node<E> currentTree) {
-
         int len = end - start;
-
         if (len == 0) {
             currentTree.add(splayPath[start + (len / 2)].getValue());
-
         } else if (len > 0) {
             currentTree.add(splayPath[start + len / 2].getValue());
             addNodesRecursively(splayPath, start, start + len / 2 - 1, currentTree);
             addNodesRecursively(splayPath, start + len / 2 + 1, end, currentTree);
         }
-
     }
 
     public void print() {
         String left = "";
         String right = "";
-
         if (leftTree != null) {
             System.out.println("Linkerkind van " + value.toString() + " is " + leftTree.getValue().toString());
             leftTree.print();
         }
-
         if (rightTree != null) {
             System.out.println("Rechterkind van " + value.toString() + " is " + rightTree.getValue().toString());
             rightTree.print();
         }
     }
-
 }
